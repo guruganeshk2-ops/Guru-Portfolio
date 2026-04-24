@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guru — UI UX Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f5f0;
+      --card: #eeecea;
+      --border: #d8d4cc;
+      --border-light: #e4e0d8;
+      --text: #1a1a18;
+      --text-dim: #666;
+      --text-dimmer: #999;
+      --accent: #d4f244;
+      --green: #16a34a;
+      --serif: 'Fraunces', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+      --r: 18px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 15px; line-height: 1.6;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(247,245,240,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+    .nav-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+    .nav-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-links a {
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 13px; color: var(--text-dim);
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--border-light); }
+    .nav-active { color: var(--text) !important; background: var(--border) !important; }
+    .nav-btn { background: #1a1a18 !important; color: #f7f5f0 !important; font-weight: 600 !important; }
+    .nav-btn:hover { opacity: .85; background: #1a1a18 !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; padding: 100px 40px 80px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .hero-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 56px;
+    }
+    .avail-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 14px 6px 8px;
+      font-size: 12px; color: var(--text-dim);
+    }
+    .avail-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* FLIP CARD */
+    .flip-card {
+      width: 260px; height: 340px; flex-shrink: 0;
+      perspective: 1000px; cursor: pointer;
+    }
+    .flip-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.4,0.2,0.2,1);
+    }
+    .flip-card:hover .flip-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-front, .flip-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+    .flip-front img, .flip-back img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .flip-front::after {
+      content: 'Hover me';
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+      color: #1a1a18; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 100px;
+      border: 1px solid var(--border);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .flip-card:hover .flip-front::after { opacity: 1; }
+
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 14px;
+    }
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: clamp(70px, 10.5vw, 138px);
+      font-weight: 300; line-height: .91; letter-spacing: -.03em;
+    }
+    .hero-h1 em { font-style: italic; color: var(--text-dim); }
+
+    .hero-foot {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-top: 52px; gap: 2rem;
+    }
+    .hero-tagline {
+      max-width: 340px; font-size: 14px; color: var(--text-dim);
+      font-weight: 300; line-height: 1.75;
+    }
+    .hero-cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #1a1a18; color: #f7f5f0;
+      padding: 12px 22px; border-radius: 100px;
+      font-size: 13px; font-weight: 600; white-space: nowrap;
+      transition: opacity .2s; flex-shrink: 0;
+    }
+    .hero-cta-btn:hover { opacity: .85; }
+
+    /* TICKER */
+    .ticker { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 13px 0; background: var(--card); }
+    .ticker-inner { display: flex; width: max-content; animation: tick 28s linear infinite; }
+    @keyframes tick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .t-item { display: flex; align-items: center; gap: 14px; padding: 0 30px; font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dimmer); white-space: nowrap; }
+    .t-dot { width: 5px; height: 5px; border-radius: 50%; background: #1a1a18; flex-shrink: 0; }
+
+    /* SERVICES */
+    .sec { padding: 100px 40px; }
+    .sec-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 52px; }
+    .sec-title { font-family: var(--serif); font-size: clamp(38px, 5vw, 62px); font-weight: 300; line-height: 1.05; letter-spacing: -.025em; }
+    .sec-title em { font-style: italic; color: var(--text-dim); }
+    .sec-note { max-width: 280px; font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.7; text-align: right; }
+
+    .svc-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
+    }
+    .svc-col { padding: 30px 26px; border-right: 1px solid var(--border); transition: background .3s; }
+    .svc-col:last-child { border-right: none; }
+    .svc-col:hover { background: var(--card); }
+    .svc-num { font-size: 11px; color: var(--text-dimmer); letter-spacing: .1em; margin-bottom: 18px; }
+    .svc-name { font-family: var(--serif); font-size: 22px; font-weight: 400; margin-bottom: 22px; line-height: 1.2; }
+    .svc-list { list-style: none; }
+    .svc-list li { font-size: 12.5px; color: var(--text-dim); font-weight: 300; padding: 8px 0; border-bottom: 1px solid var(--border-light); line-height: 1.4; }
+    .svc-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+    /* ABOUT */
+    .about-sec { padding: 100px 40px; background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .sec-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 18px; }
+    .about-h2 { font-family: var(--serif); font-size: clamp(34px, 4vw, 52px); font-weight: 300; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 26px; }
+    .about-h2 em { font-style: italic; color: var(--text-dim); }
+    .about-p { font-size: 14px; color: var(--text-dim); font-weight: 300; line-height: 1.8; margin-bottom: 28px; }
+    .about-p strong { color: var(--text); font-weight: 500; }
+    .info-box { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 26px; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--border); }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 12px; color: var(--text-dimmer); }
+    .info-val { font-size: 13px; color: var(--text); }
+    .info-val a { transition: color .2s; }
+    .info-val a:hover { color: var(--accent); }
+    .story-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border); border-radius: 100px;
+      padding: 10px 20px; font-size: 13px; color: var(--text); font-weight: 500;
+      transition: border-color .2s;
+    }
+    .story-btn:hover { border-color: var(--text); }
+    .about-img-frame { width: 100%; aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+    .about-img-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* PROJECTS */
+    .proj-sec { padding: 100px 40px; }
+    .proj-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; border-radius: var(--r); overflow: hidden; border: 1px solid var(--border);
+    }
+    .proj-card { background: var(--card); display: block; overflow: hidden; transition: background .3s; }
+    .proj-card:hover { background: #e5e2dc; }
+    .proj-img-wrap { width: 100%; aspect-ratio: 16/10; overflow: hidden; }
+    .proj-img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .proj-card:hover .proj-img { transform: scale(1.04); }
+    .proj-body { padding: 26px 28px; }
+    .proj-num { font-size: 11px; color: var(--text-dimmer); letter-spacing: .1em; margin-bottom: 8px; }
+    .proj-title { font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.2; margin-bottom: 10px; }
+    .proj-desc { font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.65; }
+    .proj-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; color: #1a1a18; font-weight: 600; letter-spacing: .04em; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* CONTACT */
+    .contact-sec { padding: 100px 40px; background: var(--card); border-top: 1px solid var(--border); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: start; }
+    .contact-h2 { font-family: var(--serif); font-size: clamp(34px, 4vw, 52px); font-weight: 300; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 18px; }
+    .contact-h2 em { font-style: italic; color: var(--text-dim); }
+    .contact-sub { font-size: 14px; color: var(--text-dim); font-weight: 300; line-height: 1.7; margin-bottom: 34px; }
+    .cdet { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+    .cdet:first-child { border-top: 1px solid var(--border); }
+    .cdet-icon { width: 38px; height: 38px; background: #fff; border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .cdet-lbl { font-size: 11px; color: var(--text-dimmer); margin-bottom: 2px; }
+    .cdet-val { font-size: 14px; color: var(--text); font-weight: 400; }
+    .cdet-val a:hover { color: var(--accent); }
+
+    .cform { display: flex; flex-direction: column; gap: 13px; }
+    .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .fgroup { display: flex; flex-direction: column; gap: 5px; }
+    .fgroup label { font-size: 11px; font-weight: 500; color: var(--text-dimmer); letter-spacing: .08em; text-transform: uppercase; }
+    .fgroup input, .fgroup select, .fgroup textarea {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; color: var(--text); font-family: var(--sans); font-size: 14px;
+      outline: none; transition: border-color .2s; resize: vertical;
+    }
+    .fgroup input::placeholder, .fgroup textarea::placeholder { color: var(--text-dimmer); }
+    .fgroup input:focus, .fgroup select:focus, .fgroup textarea:focus { border-color: rgba(212,242,68,.5); }
+    .fgroup select option { background: #1a1a1a; }
+    .fgroup textarea { min-height: 120px; }
+    .fsub {
+      background: #d4f244; color: #1a1a18; border: none; border-radius: 10px;
+      padding: 14px; font-family: var(--sans); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .fsub:hover { opacity: .85; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border); padding: 30px 40px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    }
+    .f-logo { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--text); }
+    .f-copy { font-size: 12px; color: var(--text-dimmer); }
+    .f-links { display: flex; gap: 20px; list-style: none; }
+    .f-links a { font-size: 12px; color: var(--text-dimmer); transition: color .2s; }
+    .f-links a:hover { color: var(--text); }
+
+    /* REVEAL */
+    .rv { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .rv.on { opacity: 1; transform: none; }
+
+    /* MOBILE */
+    @media(max-width:900px){
+      nav { padding: 0 20px; }
+      .nav-links li:not(:last-child) { display: none; }
+      .hero, .sec, .about-sec, .proj-sec, .contact-sec { padding: 70px 20px; }
+      .hero-h1 { font-size: clamp(52px, 14vw, 100px); }
+      .flip-card { width: 130px; height: 170px; }
+      .svc-grid { grid-template-columns: 1fr 1fr; }
+      .svc-col:nth-child(2) { border-right: none; }
+      .svc-col:nth-child(3) { border-top: 1px solid var(--border); }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .about-img-frame { max-width: 320px; }
+      .proj-grid { grid-template-columns: 1fr; }
+      .sec-header, .sec-header.ph { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .sec-note { text-align: left; max-width: 100%; }
+      .frow2 { grid-template-columns: 1fr; }
+      footer { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <img src="https://framerusercontent.com/images/WYNm8SwIfgG6TSz1BzWVVqnURs.jpeg?width=200" alt="Guru" class="nav-avatar"/>
+    <span class="nav-name">Guru Ganesh K</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#home" class="nav-active">Home</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact" class="nav-btn">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-topbar rv">
+    <div class="avail-pill">
+      <span class="avail-dot"></span>
+      Available for work
+    </div>
+    <div class="flip-card">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <img src="https://framerusercontent.com/images/WYNm8SwIfgG6TSz1BzWVVqnURs.jpeg?width=600" alt="Guru Ganesh K - Front"/>
+        </div>
+        <div class="flip-back">
+          <img src="https://framerusercontent.com/images/WYNm8SwIfgG6TSz1BzWVVqnURs.jpeg?width=600" alt="Guru Ganesh K - Back" style="filter:grayscale(100%) contrast(1.1);"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rv" style="transition-delay:.1s">
+    <div class="hero-eyebrow">UI UX Designer </div>
+    <h1 class="hero-h1">UI UX<br/><em>designer</em></h1>
+  </div>
+
+  <div class="hero-foot rv" style="transition-delay:.2s">
+    <p class="hero-tagline">I'm a digital designer and developer. I design clean, user-focused digital experiences that blend creativity with functionality.</p>
+    <a href="#contact" class="hero-cta-btn">
+      Get in touch
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="t-item"><span class="t-dot"></span>UI/UX Design</div>
+    <div class="t-item"><span class="t-dot"></span>Graphic Design</div>
+    <div class="t-item"><span class="t-dot"></span>Web Design</div>
+    <div class="t-item"><span class="t-dot"></span>Branding</div>
+    <div class="t-item"><span class="t-dot"></span>Prototyping</div>
+    <div class="t-item"><span class="t-dot"></span>Web Development</div>
+    <div class="t-item"><span class="t-dot"></span>Interaction Design</div>
+    <div class="t-item"><span class="t-dot"></span>Visual Identity</div>
+    <div class="t-item"><span class="t-dot"></span>UI/UX Design</div>
+    <div class="t-item"><span class="t-dot"></span>Graphic Design</div>
+    <div class="t-item"><span class="t-dot"></span>Web Design</div>
+    <div class="t-item"><span class="t-dot"></span>Branding</div>
+    <div class="t-item"><span class="t-dot"></span>Prototyping</div>
+    <div class="t-item"><span class="t-dot"></span>Web Development</div>
+    <div class="t-item"><span class="t-dot"></span>Interaction Design</div>
+    <div class="t-item"><span class="t-dot"></span>Visual Identity</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="sec" id="services">
+  <div class="sec-header rv">
+    <h2 class="sec-title">what I can<br/><em>do for you</em></h2>
+    <p class="sec-note">I design clean, user-focused digital experiences that blend creativity with functionality. From concept to final UI, I craft intuitive interfaces that solve real problems and elevate user engagement.</p>
+  </div>
+  <div class="svc-grid rv" style="transition-delay:.12s">
+    <div class="svc-col">
+      <div class="svc-num">01</div>
+      <div class="svc-name">UI/UX<br/>design</div>
+      <ul class="svc-list">
+        <li>Wireframing and prototyping</li>
+        <li>User Interface design for web and mobile apps</li>
+        <li>Usability testing and user feedback analysis</li>
+        <li>Interaction design and micro-animations</li>
+      </ul>
+    </div>
+    <div class="svc-col">
+      <div class="svc-num">02</div>
+      <div class="svc-name">Graphic<br/>Design</div>
+      <ul class="svc-list">
+        <li>Logo and brand identity design</li>
+        <li>Social media graphics and ad creatives</li>
+        <li>Infographics and data visualization</li>
+        <li>Custom illustrations and icons</li>
+      </ul>
+    </div>
+    <div class="svc-col">
+      <div class="svc-num">03</div>
+      <div class="svc-name">Web<br/>Design</div>
+      <ul class="svc-list">
+        <li>Responsive website design</li>
+        <li>Landing page design and optimization</li>
+        <li>Webflow development and customization</li>
+        <li>Website maintenance and updates</li>
+      </ul>
+    </div>
+    <div class="svc-col">
+      <div class="svc-num">04</div>
+      <div class="svc-name">Branding</div>
+      <ul class="svc-list">
+        <li>Brand strategy and identity development</li>
+        <li>Visual style guide creation</li>
+        <li>Typography and color scheme selection</li>
+        <li>Brand storytelling and messaging</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-sec" id="about">
+  <div class="about-grid">
+    <div class="rv">
+      <div class="sec-label">About me</div>
+      <h2 class="about-h2">Hi, I'm<br/><em>Guru Ganesh K</em></h2>
+      <p class="about-p">I am <strong>Guru Ganesh K</strong>, an MCA student and a UI/UX developer. I love creating simple and user-friendly designs. I enjoy designing clean interfaces and improving user experience. I am always learning new skills and working to become better every day.</p>
+      <div class="info-box">
+        <div class="info-row">
+          <span class="info-label">Mobile no</span>
+          <span class="info-val"><a href="tel:9087628480">+91 9087628480</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-val"><a href="mailto:guruganeshk2@gmail.com">guruganeshk2@gmail.com</a></span>
+        </div>
+      </div>
+      <a href="#contact" class="story-btn">
+        My Story
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 2l4.5 4.5L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="rv" style="transition-delay:.14s">
+      <div class="about-img-frame">
+        <img src="https://framerusercontent.com/images/WYNm8SwIfgG6TSz1BzWVVqnURs.jpeg?width=900" alt="Guru Ganesh K"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="proj-sec" id="projects">
+  <div class="sec-header ph rv">
+    <h2 class="sec-title">Featured<br/><em>Projects</em></h2>
+    <p class="sec-note">These selected projects reflect my passion for blending strategy with creativity — solving real problems through thoughtful design and impactful storytelling.</p>
+  </div>
+  <div class="proj-grid rv" style="transition-delay:.1s">
+    <a href="https://www.figma.com/proto/gXNVWRMQOqVa9wAWWFiQzN/Untitled?node-id=1-2&starting-point-node-id=1%3A2&t=rAYzrCA82NUMb4oZ-1" target="_blank" class="proj-card">
+      <div class="proj-img-wrap">
+        <img src="https://framerusercontent.com/images/2Cv27JgMkY1w7XFNWhkYUTjjlc.png?width=1024" alt="AK Racing Team Website" class="proj-img"/>
+      </div>
+      <div class="proj-body">
+        <div class="proj-num">01</div>
+        <div class="proj-title">AK Racing Team Website</div>
+        <p class="proj-desc">I designed the unofficial AK Racing Team website to highlight the speed, passion, and excellence of Ajith Kumar's racing team.</p>
+        <div class="proj-link">View Project <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </a>
+    <a href="https://www.figma.com/proto/GRtsZZHdJHjEkG8KnTUoE5/Untitled?node-id=8-104&p=f&viewport=260%2C341%2C0.11&t=OehBdl8givxXbrYI-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A2&page-id=0%3A1s" target="_blank" class="proj-card">
+      <div class="proj-img-wrap">
+        <img src="https://framerusercontent.com/images/ObK22Wt6GZ9KfgzizqMhFGyzCw4.png?width=991" alt="Hiphop Tamizha Adhi Website" class="proj-img"/>
+      </div>
+      <div class="proj-body">
+        <div class="proj-num">02</div>
+        <div class="proj-title">Hiphop Tamizha Adhi Website</div>
+        <p class="proj-desc">A modern UI/UX design inspired by the style and energy of Hiphop Adhi. Bold visuals, clean layouts, and smooth navigation to showcase music, branding, and personality.</p>
+        <div class="proj-link">View Project <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-sec" id="contact">
+  <div class="contact-grid">
+    <div class="rv">
+      <div class="sec-label">Contact</div>
+      <h2 class="contact-h2">Let's work<br/><em>together</em></h2>
+      <p class="contact-sub">Let's build something impactful together — whether it's your brand, your website, or your next big idea.</p>
+      <div>
+        <div class="cdet">
+          <div class="cdet-icon">📱</div>
+          <div>
+            <div class="cdet-lbl">Mobile no</div>
+            <div class="cdet-val"><a href="tel:9087628480">9087628480</a></div>
+          </div>
+        </div>
+        <div class="cdet">
+          <div class="cdet-icon">✉️</div>
+          <div>
+            <div class="cdet-lbl">Email</div>
+            <div class="cdet-val"><a href="mailto:guruganeshk2@gmail.com">guruganeshk2@gmail.com</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rv" style="transition-delay:.14s">
+      <form class="cform" onsubmit="submitForm(event)">
+        <div class="frow2">
+          <div class="fgroup">
+            <label>Name</label>
+            <input type="text" placeholder="Your name" required/>
+          </div>
+          <div class="fgroup">
+            <label>Email</label>
+            <input type="email" placeholder="your@email.com" required/>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>Service Needed ?</label>
+          <select>
+            <option value="" disabled selected>Select…</option>
+            <option>Branding</option>
+            <option>Web Design</option>
+            <option>UI / UX</option>
+            <option>Graphic Design</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label>What Can I Help You...</label>
+          <textarea placeholder="Tell me about your project…"></textarea>
+        </div>
+        <button type="submit" class="fsub" id="sb">Submit</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Guru.</div>
+  <span class="f-copy">© 2025 Guru Ganesh K. All rights reserved.</span>
+  <ul class="f-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('on'); }), {threshold:.08});
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Form
+  function submitForm(e) {
+    e.preventDefault();
+    const b = document.getElementById('sb');
+    b.textContent = '✓ Sent!';
+    b.style.background = '#4ade80';
+    setTimeout(() => { b.textContent = 'Submit'; b.style.background = ''; e.target.reset(); }, 3000);
+  }
+</script>
+</body>
+</html>
